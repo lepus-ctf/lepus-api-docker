@@ -1,0 +1,23 @@
+db:
+  image: postgres
+
+push:
+  build: push
+  command: node index.js
+
+api:
+  build: api
+  command: gunicorn -b 0.0.0.0:8000 lepus.wsgi:application
+  links:
+    - db
+    - push
+
+web:
+  build: web
+  links:
+    - api
+    - push
+  volumes_from:
+    - api
+  ports:
+    - "8000:8000"
